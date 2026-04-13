@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 function App() {
   const [selectedArtist, setSelectedArtist] = useState("");
   const [monthlyListeners, setMonthlyListeners] = useState("");
+  const [mostStreamedSong, setMostStreamedSong] = useState("");
 
   const artists = [
     {
@@ -65,15 +66,21 @@ function App() {
 
   const handleMonthlyListenerCountClick = () => {
     const findArtist = artists.find(artist => artist.name === selectedArtist);
-    console.log("the artist is", findArtist.name);
     if (findArtist) {
-      setMonthlyListeners(`monthly listeners`);
+      setMonthlyListeners(`${findArtist.name} has ${findArtist.monthlyListeners.toLocaleString()} monthly listeners`);
+    }
+  };
+
+  const handleMostStreamedSongClick = () => {
+    const findArtist = artists.find(artist => artist.name === selectedArtist);
+    if (findArtist) {
+      setMostStreamedSong(`${findArtist.name}'s most streamed song is ${findArtist.mostStreamedSong}`);
     }
   };
 
   return (
     <div>
-      <label>
+      <label style="paddingBottom: 20px">
         <select name="selectedArtist" value={selectedArtist} onChange={handleSelectedArtistChange}>
           <option value="">Choose an artist...</option>
           {artists.map((artist) => (
@@ -85,12 +92,13 @@ function App() {
       </label>
       <Stack spacing={2} direction="row">
         <Button variant="outlined" onClick={() => handleMonthlyListenerCountClick(selectedArtist)}>Get their monthly listener count</Button>
-        <Button variant="outlined" onClick={() => {alert("clicked most streamed song")}}>Get their most streamed song</Button>
+        <Button variant="outlined" onClick={() => handleMostStreamedSongClick(selectedArtist)}>Get their most streamed song</Button>
       </Stack>
+      <p></p>
       <p>{monthlyListeners}</p>
+      <p>{mostStreamedSong}</p>
     </div>
   );
-  //return <div>Olivia Dean's most streamed song is {artists.oliviaDean.mostStreamedSong}</div>;
 }
 
 export default App;
