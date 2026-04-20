@@ -7,6 +7,7 @@ function App() {
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
+  /*
   const artists = [
     {
       name: "Maggie Rogers",
@@ -58,16 +59,27 @@ function App() {
       monthlyListeners: 3442765,
       mostStreamedSong: "Crush"
     },
-  ];
+  ]; */
+
+  async function getArtist(name) {
+    try {
+      const response = await fetch(`/artist/${encodeURIComponent(name)}`);
+      if (!response.ok) {
+        throw new Error("Artist not found");
+      }
+      const artist = await response.json()
+    } catch (error) {
+      console.error("Error finding the artist:", error);
+    }
+  }
 
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
 
   const handleMonthlyListenerCountClick = () => {
-    const findArtist = artists.find(artist => artist.name === selectedArtist);
-    if (findArtist) {
-      setMonthlyListeners(`${findArtist.name} has ${findArtist.monthlyListeners.toLocaleString()} monthly listeners`);
+    if (artist) {
+      setMonthlyListeners(`${artist.name} has ${artist.monthlyListeners.toLocaleString()} monthly listeners`);
     }
   };
 
