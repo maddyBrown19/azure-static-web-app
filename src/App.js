@@ -3,11 +3,11 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
 function App() {
+  const API_BASE_URL = "http://localhost:8080";
   const [selectedArtist, setSelectedArtist] = useState("");
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
-  /*
   const artists = [
     {
       name: "Maggie Rogers",
@@ -59,18 +59,20 @@ function App() {
       monthlyListeners: 3442765,
       mostStreamedSong: "Crush"
     },
-  ]; */
+  ];
 
   async function getArtist(name) {
+    var artist;
     try {
-      const response = await fetch(`/artist/${encodeURIComponent(name)}`);
+      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent{name}}`);
       if (!response.ok) {
         throw new Error("Artist not found");
       }
-      const artist = await response.json()
+      artist = await response.json()
     } catch (error) {
       console.error("Error finding the artist:", error);
     }
+    return artist;
   }
 
   const handleSelectedArtistChange = (e) => {
@@ -78,15 +80,22 @@ function App() {
   };
 
   const handleMonthlyListenerCountClick = () => {
-    if (artist) {
-      setMonthlyListeners(`${artist.name} has ${artist.monthlyListeners.toLocaleString()} monthly listeners`);
+    const artistData = getArtist(selectedArtist);
+    console.log("DATA FROM THE API:", artistData)
+    if (artistData) {
+      setMonthlyListeners(`${artistData.name} has ${artistData.monthlyListeners.toLocaleString()} monthly listeners`);
     }
   };
 
   const handleMostStreamedSongClick = () => {
-    const findArtist = artists.find(artist => artist.name === selectedArtist);
-    if (findArtist) {
-      setMostStreamedSong(`${findArtist.name}'s most streamed song is "${findArtist.mostStreamedSong}"`);
+    // CAN PUT THIS PART BACK ABOVE IN LISTENER FUNCTION TO MAKE THE UI WORK LIKE THE OLD WAY
+    //const findArtist = artists.find(artist => artist.name === selectedArtist);
+    //if (findArtist) {
+      //setMostStreamedSong(`${findArtist.name}'s most streamed song is "${findArtist.mostStreamedSong}"`);
+    //}
+    const artistData = getArtist(selectedArtist);
+    if (artistData) {
+      setMostStreamedSong(`${artistData.name}'s most streamed song is "${artistData.mostStreamedSong}"`);
     }
   };
 

@@ -8,7 +8,7 @@ import (
 type artist struct {
 	Name             string `json:"name"`
 	MonthlyListeners int    `json:"monthlyListeners"`
-	MostStreamedSong string `json:"mostStreamedSongs"`
+	MostStreamedSong string `json:"mostStreamedSong"`
 }
 
 var artists = []artist{
@@ -35,7 +35,9 @@ func getArtist(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5500")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	if !foundArtist {
 		w.WriteHeader(http.StatusNotFound)
 	} else {
@@ -47,5 +49,7 @@ func getArtist(w http.ResponseWriter, r *http.Request) {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /artist/{name}", getArtist)
+	//fileServer := http.FileServer(http.Dir("./static"))
+	//mux.Handle("/", fileServer)
 	http.ListenAndServe(":8080", mux)
 }
