@@ -8,67 +8,50 @@ function App() {
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
+  // make a simpler data structure w just the artist names -- need this to populate the dropdown
+  const artists = ["Maggie Rogers", "Lorde", "Renee Rapp", "Morgan Wallen", "Bon Iver", "Olivia Dean", 
+    "Anya Gupta", "Billie Eilish", "Gracie Abrams", "Ethel Cain"];
+  /*
   const artists = [
     {
       name: "Maggie Rogers",
-      monthlyListeners: 7089646,
-      mostStreamedSong: "Dawns (feat. Maggie Rogers)"
     },
     {
       name: "Lorde",
-      monthlyListeners: 27123369,
-      mostStreamedSong: "Ribs"
     },
     {
       name: "Renee Rapp",
-      monthlyListeners: 4996396,
-      mostStreamedSong: "I Think I Like You Better When You're Gone"
     },
     {
       name: "Morgan Wallen",
-      monthlyListeners: 32830914,
-      mostStreamedSong: "I Had Some Help (feat. Morgan Wallen)"
     },
     {
       name: "Bon Iver",
-      monthlyListeners: 16094296,
-      mostStreamedSong: "exile (feat. Bon Iver)"
     },
     {
       name: "Olivia Dean",
-      monthlyListeners: 61943515,
-      mostStreamedSong: "Man I Need"
     },
     {
       name: "Anya Gupta",
-      monthlyListeners: 3280,
-      mostStreamedSong: "you ruined phoebe bridgers"
     },
     {
       name: "Billie Eilish",
-      monthlyListeners: 84774525,
-      mostStreamedSong: "BIRDS OF A FEATHER"
     },
     {
       name: "Gracie Abrams",
-      monthlyListeners: 34874334,
-      mostStreamedSong: "That's So True"
     },
     {
       name: "Ethel Cain",
-      monthlyListeners: 3442765,
-      mostStreamedSong: "Crush"
     },
-  ];
+  ];*/
 
   async function getArtist(name) {
-    var artist;
     try {
-      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent{name}}`);
+      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}`);
       if (!response.ok) {
         throw new Error("Artist not found");
       }
-      artist = await response.json()
+    var artist = await response.json();
     } catch (error) {
       console.error("Error finding the artist:", error);
     }
@@ -79,21 +62,15 @@ function App() {
     setSelectedArtist(e.target.value);
   };
 
-  const handleMonthlyListenerCountClick = () => {
-    const artistData = getArtist(selectedArtist);
-    console.log("DATA FROM THE API:", artistData)
+  async function handleMonthlyListenerCountClick() {
+    const artistData = await getArtist(selectedArtist);
     if (artistData) {
       setMonthlyListeners(`${artistData.name} has ${artistData.monthlyListeners.toLocaleString()} monthly listeners`);
     }
   };
 
-  const handleMostStreamedSongClick = () => {
-    // CAN PUT THIS PART BACK ABOVE IN LISTENER FUNCTION TO MAKE THE UI WORK LIKE THE OLD WAY
-    //const findArtist = artists.find(artist => artist.name === selectedArtist);
-    //if (findArtist) {
-      //setMostStreamedSong(`${findArtist.name}'s most streamed song is "${findArtist.mostStreamedSong}"`);
-    //}
-    const artistData = getArtist(selectedArtist);
+  async function handleMostStreamedSongClick() {
+    const artistData = await getArtist(selectedArtist);
     if (artistData) {
       setMostStreamedSong(`${artistData.name}'s most streamed song is "${artistData.mostStreamedSong}"`);
     }
@@ -107,8 +84,8 @@ function App() {
           <select name="selectedArtist" value={selectedArtist} onChange={handleSelectedArtistChange}>
             <option value="">Choose an artist...</option>
             {artists.map((artist) => (
-              <option key={artist.name} value={artist.name}>
-                {artist.name}
+              <option key={artist} value={artist}>
+                {artist}
               </option>
             ))}
           </select>
