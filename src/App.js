@@ -8,45 +8,10 @@ function App() {
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
-  // Need to test this new data structure to populate the dropdown - reclone repo and restart the server
   const artists = ["Maggie Rogers", "Lorde", "Renee Rapp", "Morgan Wallen", "Bon Iver", "Olivia Dean", 
     "Anya Gupta", "Billie Eilish", "Gracie Abrams", "Ethel Cain"];
 
-  /* Old format
-  const artists = [
-    {
-      name: "Maggie Rogers",
-    },
-    {
-      name: "Lorde",
-    },
-    {
-      name: "Renee Rapp",
-    },
-    {
-      name: "Morgan Wallen",
-    },
-    {
-      name: "Bon Iver",
-    },
-    {
-      name: "Olivia Dean",
-    },
-    {
-      name: "Anya Gupta",
-    },
-    {
-      name: "Billie Eilish",
-    },
-    {
-      name: "Gracie Abrams",
-    },
-    {
-      name: "Ethel Cain",
-    },
-  ];*/
-
-  async function getArtist(name) {
+  async function getAllDataByArtist(name) {
     try {
       const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}`);
       if (!response.ok) {
@@ -59,21 +24,47 @@ function App() {
     return artist;
   }
 
+  async function getMonthlyListenersByArtist(name) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}/monthlyListeners`);
+      if (!response.ok) {
+        throw new Error("Artist's monthly listeners not found");
+      }
+    var monthlyListeners = await response.json();
+    } catch (error) {
+      console.error("Error finding the artist's monthly listeners:", error);
+    }
+    return monthlyListeners;
+  }
+
+  async function getMostStreamedSongByArtist(name) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}/mostStreamedSong`);
+      if (!response.ok) {
+        throw new Error("Artist's most streamed song not found");
+      }
+    var mostStreamedSong = await response.json();
+    } catch (error) {
+      console.error("Error finding the artist's most streamed song:", error);
+    }
+    return mostStreamedSong;
+  }
+
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
 
   async function handleMonthlyListenerCountClick() {
-    const artistData = await getArtist(selectedArtist);
-    if (artistData) {
-      setMonthlyListeners(`${artistData.name} has ${artistData.monthlyListeners.toLocaleString()} monthly listeners`);
+    const artistMonthlyListeners = await getMonthlyListenersByArtist(selectedArtist);
+    if (artistMonthlyListeners) {
+      setMonthlyListeners(`${selectedArtist} has ${artistMonthlyListeners.toLocaleString()} monthly listeners`);
     }
   };
 
   async function handleMostStreamedSongClick() {
-    const artistData = await getArtist(selectedArtist);
-    if (artistData) {
-      setMostStreamedSong(`${artistData.name}'s most streamed song is "${artistData.mostStreamedSong}"`);
+    const artistMostStreamedSong = await getMostStreamedSongByArtist(selectedArtist);
+    if (artistMostStreamedSong) {
+      setMostStreamedSong(`${selectedArtist}'s most streamed song is "${artistMostStreamedSong}"`);
     }
   };
 

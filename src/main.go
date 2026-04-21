@@ -24,7 +24,7 @@ var artists = []artist{
 	{Name: "Ethel Cain", MonthlyListeners: 3442765, MostStreamedSong: "Crush"},
 }
 
-func getArtist(w http.ResponseWriter, r *http.Request) {
+func getAllDataByArtist(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	var selectedArtist artist
 	foundArtist := false
@@ -45,8 +45,52 @@ func getArtist(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getMonthlyListenersByArtist(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	var selectedArtist artist
+	foundArtist := false
+	for _, artist := range artists {
+		if artist.Name == name {
+			selectedArtist = artist
+			foundArtist = true
+			break
+		}
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	if !foundArtist {
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(selectedArtist.MonthlyListeners)
+	}
+}
+
+func getMostStreamedSongByArtist(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	var selectedArtist artist
+	foundArtist := false
+	for _, artist := range artists {
+		if artist.Name == name {
+			selectedArtist = artist
+			foundArtist = true
+			break
+		}
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	if !foundArtist {
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(selectedArtist.MostStreamedSong)
+	}
+}
+
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /artist/{name}", getArtist)
+	mux.HandleFunc("GET /artist/{name}", getAllDataByArtist)
+	mux.HandleFunc("GET /artist/{name}/monthlyListeners", getMonthlyListenersByArtist)
+	mux.HandleFunc("GET /artist/{name}/mostStreamedSong", getMostStreamedSongByArtist)
 	http.ListenAndServe(":8080", mux)
 }
