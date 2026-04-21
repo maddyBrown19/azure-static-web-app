@@ -8,10 +8,11 @@ function App() {
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
-  // make a simpler data structure w just the artist names -- need this to populate the dropdown
+  // Need to test this new data structure to populate the dropdown - reclone repo and restart the server
   const artists = ["Maggie Rogers", "Lorde", "Renee Rapp", "Morgan Wallen", "Bon Iver", "Olivia Dean", 
     "Anya Gupta", "Billie Eilish", "Gracie Abrams", "Ethel Cain"];
-  /*
+
+  /* Old format
   const artists = [
     {
       name: "Maggie Rogers",
