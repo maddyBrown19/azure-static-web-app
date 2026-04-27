@@ -10,7 +10,6 @@ function App() {
   const [monthlyListeners, setMonthlyListeners] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
-  // Fetch data needed to render the UI (names of artists for the dropdown) 
   useEffect(() => {
     async function loadInitialData() {
       try {
@@ -32,11 +31,11 @@ function App() {
       if (!response.ok) {
         throw new Error(error);
       }
-      var data = await response.json();
+      var apiData = await response.json();
     } catch (e) {
       console.error(e);
     }
-    return data;
+    return apiData;
   }
 
   const handleSelectedArtistChange = (e) => {
