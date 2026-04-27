@@ -24,6 +24,17 @@ var artists = []artist{
 	{Name: "Ethel Cain", MonthlyListeners: 3442765, MostStreamedSong: "Crush"},
 }
 
+func getArtistNames(w http.ResponseWriter, r *http.Request) {
+	var names []string
+	for _, artist := range artists {
+		names = append(names, artist.Name)
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(names)
+}
+
 func getAllDataByArtist(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	var selectedArtist artist
@@ -89,7 +100,8 @@ func getMostStreamedSongByArtist(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /artist/{name}", getAllDataByArtist)
+	//mux.HandleFunc("GET /artist/{name}", getAllDataByArtist)
+	mux.HandleFunc("GET /artistNames", getArtistNames)
 	mux.HandleFunc("GET /artist/{name}/monthlyListeners", getMonthlyListenersByArtist)
 	mux.HandleFunc("GET /artist/{name}/mostStreamedSong", getMostStreamedSongByArtist)
 	http.ListenAndServe(":8080", mux)
