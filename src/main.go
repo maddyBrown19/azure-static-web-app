@@ -3,22 +3,11 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
-	"slices"
-
-	//"fmt"
 	"log"
 	"net/http"
 	"os"
-	//"strings"
+	"slices"
 )
-
-/*
-type artist struct {
-	Name             string `json:"name"`
-	MonthlyListeners int    `json:"monthlyListeners"`
-	MostStreamedSong string `json:"mostStreamedSong"`
-}
-*/
 
 type DataRow struct {
 	TrackID          string `json:"trackID"`
@@ -37,20 +26,6 @@ type DataRow struct {
 	AlbumType        string `json:"albumType"`
 	TrackDurationMin string `json:"trackDurationMin"`
 }
-
-/*
-var artists = []artist{
-	{Name: "Maggie Rogers", MonthlyListeners: 7089646, MostStreamedSong: "Dawns (feat. Maggie Rogers)"},
-	{Name: "Lorde", MonthlyListeners: 27123369, MostStreamedSong: "Ribs"},
-	{Name: "Renee Rapp", MonthlyListeners: 4996396, MostStreamedSong: "I Think I Like You Better When You're Gone"},
-	{Name: "Morgan Wallen", MonthlyListeners: 32830914, MostStreamedSong: "I Had Some Help (feat. Morgan Wallen)"},
-	{Name: "Bon Iver", MonthlyListeners: 16094296, MostStreamedSong: "exile (feat. Bon Iver)"},
-	{Name: "Olivia Dean", MonthlyListeners: 61943515, MostStreamedSong: "Man I Need"},
-	{Name: "Anya Gupta", MonthlyListeners: 3280, MostStreamedSong: "you ruined phoebe bridgers"},
-	{Name: "Billie Eilish", MonthlyListeners: 84774525, MostStreamedSong: "BIRDS OF A FEATHER"},
-	{Name: "Gracie Abrams", MonthlyListeners: 34874334, MostStreamedSong: "That's So True"},
-	{Name: "Ethel Cain", MonthlyListeners: 3442765, MostStreamedSong: "Crush"},
-} */
 
 func parseSpotifyData(data [][]string) []DataRow {
 	var spotifyData []DataRow
@@ -191,6 +166,5 @@ func main() {
 	mux.HandleFunc("GET /artistNames", getArtistNames)
 	mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
 	mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
-	//mux.HandleFunc("GET /artist/{name}/{data}", getSelectedDataByArtist)
 	http.ListenAndServe(":8080", mux)
 }

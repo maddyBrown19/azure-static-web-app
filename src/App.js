@@ -57,7 +57,6 @@ function App() {
 
   async function handleFollowersClick() {
     const followersByArtist = await getFollowersByArtist(selectedArtist)
-    //getSelectedDataByArtist(selectedArtist, "monthlyListeners", "Artist's monthly listeners not found");
     if (followersByArtist) {
       setFollowers(`${selectedArtist} has ${followersByArtist.toLocaleString()} followers`);
     }
