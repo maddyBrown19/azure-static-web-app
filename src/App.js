@@ -26,9 +26,9 @@ function App() {
     loadInitialData();
   }, []);
 
-  async function getSelectedDataByArtist(name, endpoint, error) {
+  async function getSelectedDataByArtist(name, data, error) {
     try {
-      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}/${endpoint}`);
+      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}/${data}`);
       if (!response.ok) {
         throw new Error(error);
       }
