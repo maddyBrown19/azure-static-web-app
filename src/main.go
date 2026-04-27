@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"slices"
 
 	//"fmt"
 	"log"
@@ -59,7 +60,6 @@ func parseSpotifyData(data [][]string) []DataRow {
 		}
 		var row DataRow
 		for j, value := range line {
-			//cleanValue := strings.ReplaceAll(value, ",", "")
 			switch j {
 			case 0:
 				row.TrackID = value
@@ -117,15 +117,43 @@ func getSpotifyData() []DataRow {
 
 var data []DataRow = getSpotifyData()
 
+func filterDataByArtist(name string) []DataRow {
+	var artistData []DataRow
+	for _, row := range data {
+		if row.ArtistName == name {
+			artistData = append(artistData, row)
+		}
+	}
+	return artistData
+}
+
 func getArtistNames(w http.ResponseWriter, r *http.Request) {
 	var names []string
 	for _, dataRow := range data {
-		names = append(names, dataRow.ArtistName)
+		if !slices.Contains(names, dataRow.ArtistName) {
+			names = append(names, dataRow.ArtistName)
+		}
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(names)
+}
+
+func getDataByArtist(w http.ResponseWriter, r *http.Request) {
+	artistData := filterDataByArtist(r.PathValue("name"))
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(artistData)
+}
+
+func getFollowersByArtist(w http.ResponseWriter, r *http.Request) {
+	artistData := filterDataByArtist(r.PathValue("name"))
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(artistData[0].ArtistFollowers)
 }
 
 /*
@@ -161,6 +189,8 @@ func getSelectedDataByArtist(w http.ResponseWriter, r *http.Request) {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /artistNames", getArtistNames)
+	mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
+	mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
 	//mux.HandleFunc("GET /artist/{name}/{data}", getSelectedDataByArtist)
 	http.ListenAndServe(":8080", mux)
 }

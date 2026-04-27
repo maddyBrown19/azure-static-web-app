@@ -7,7 +7,7 @@ function App() {
   const [artistNames, setArtistNames] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedArtist, setSelectedArtist] = useState("");
-  const [monthlyListeners, setMonthlyListeners] = useState("");
+  const [followers, setFollowers] = useState("");
   const [mostStreamedSong, setMostStreamedSong] = useState("");
 
   useEffect(() => {
@@ -25,35 +25,49 @@ function App() {
     loadInitialData();
   }, []);
 
-  async function getSelectedDataByArtist(name, data, error) {
+  async function getDataByArtist(name) {
     try {
-      const response = await fetch(`${API_BASE_URL}/artist/${encodeURIComponent(name)}/${data}`);
+      const response = await fetch(`${API_BASE_URL}/artistData/${encodeURIComponent(name)}`);
       if (!response.ok) {
-        throw new Error(error);
+        throw new Error("Artist data not found");
       }
-      var apiData = await response.json();
-    } catch (e) {
-      console.error(e);
+      var data = await response.json();
+    } catch (error) {
+      console.error(error);
     }
-    return apiData;
+    return data;
+  }
+
+  async function getFollowersByArtist(name) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/artistData/${encodeURIComponent(name)}/artistFollowers`);
+      if (!response.ok) {
+        throw new Error("Follower count not found");
+      }
+      var followers = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+    return followers;
   }
 
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
 
-  async function handleMonthlyListenerCountClick() {
-    const artistMonthlyListeners = await getSelectedDataByArtist(selectedArtist, "monthlyListeners", "Artist's monthly listeners not found");
-    if (artistMonthlyListeners) {
-      setMonthlyListeners(`${selectedArtist} has ${artistMonthlyListeners.toLocaleString()} monthly listeners`);
+  async function handleFollowersClick() {
+    const followersByArtist = await getFollowersByArtist(selectedArtist)
+    //getSelectedDataByArtist(selectedArtist, "monthlyListeners", "Artist's monthly listeners not found");
+    if (followersByArtist) {
+      setFollowers(`${selectedArtist} has ${followersByArtist.toLocaleString()} followers`);
     }
   };
 
   async function handleMostStreamedSongClick() {
-    const artistMostStreamedSong = await getSelectedDataByArtist(selectedArtist, "mostStreamedSong", "Artist's most streamed song not found");
-    if (artistMostStreamedSong) {
-      setMostStreamedSong(`${selectedArtist}'s most streamed song is "${artistMostStreamedSong}"`);
-    }
+    //const artistMostStreamedSong = await getSelectedDataByArtist(selectedArtist, "mostStreamedSong", "Artist's most streamed song not found");
+    //if (artistMostStreamedSong) {
+      //setMostStreamedSong(`${selectedArtist}'s most streamed song is "${artistMostStreamedSong}"`);
+    //}
   };
 
   if (!isLoading) {
@@ -74,12 +88,12 @@ function App() {
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined" onClick={() => handleMonthlyListenerCountClick(selectedArtist)}>Monthly listener count</Button>
+            <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of followers</Button>
             <Button variant="outlined" onClick={() => handleMostStreamedSongClick(selectedArtist)}>Most streamed song</Button>
           </Stack>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-          <p>{monthlyListeners}</p>
+          <p>{followers}</p>
           <p>{mostStreamedSong}</p>
         </div>
       </span>
