@@ -7,8 +7,8 @@ function App() {
   const [artistNames, setArtistNames] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedArtist, setSelectedArtist] = useState("");
-  const [followers, setFollowers] = useState("");
-  const [mostStreamedSong, setMostStreamedSong] = useState("");
+  const [artistFollowers, setArtistFollowers] = useState("");
+  const [artistMostPopularSong, setArtistMostPopularSong] = useState("");
 
   useEffect(() => {
     async function loadInitialData() {
@@ -51,6 +51,19 @@ function App() {
     return followers;
   }
 
+  async function getMostPopularSongByArtist(name) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/artistData/${encodeURIComponent(name)}/artistMostPopularSong`);
+      if (!response.ok) {
+        throw new Error("Most popular song not found");
+      }
+      var mostPopularSong = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+    return mostPopularSong;
+  }
+
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
@@ -58,9 +71,16 @@ function App() {
   async function handleFollowersClick() {
     const followersByArtist = await getFollowersByArtist(selectedArtist)
     if (followersByArtist) {
-      setFollowers(`${selectedArtist} has ${followersByArtist.toLocaleString()} followers`);
+      setArtistFollowers(`${selectedArtist} has ${parseInt(followersByArtist, 10).toLocaleString()} followers`);
     }
   };
+
+  async function handleArtistMostPopularSongClick() {
+    const mostPopularSongByArtist = await getMostPopularSongByArtist(selectedArtist)
+    if (mostPopularSongByArtist) {
+      setArtistMostPopularSong(`${selectedArtist}'s most popular song in 2025 was "${mostPopularSongByArtist.Song}" with a popularity rating of ${mostPopularSongByArtist.Popularity}/100`);
+    }
+  }
 
   async function handleMostStreamedSongClick() {
     //const artistMostStreamedSong = await getSelectedDataByArtist(selectedArtist, "mostStreamedSong", "Artist's most streamed song not found");
@@ -72,7 +92,7 @@ function App() {
   if (!isLoading) {
     return (
       <span style={{ fontFamily: "Monaco" }}>
-        <h1 style={{ textAlign: "center", paddingTop: 20 }}>Learn about Spotify artists</h1>
+        <h1 style={{ textAlign: "center", paddingTop: 20 }}>2025 in Spotify data</h1>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: 20 }}>
           <label>
             <select name="selectedArtist" value={selectedArtist} onChange={handleSelectedArtistChange}>
@@ -88,12 +108,12 @@ function App() {
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
             <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of followers</Button>
-            <Button variant="outlined" onClick={() => handleMostStreamedSongClick(selectedArtist)}>Most streamed song</Button>
+            <Button variant="outlined" onClick={() => handleArtistMostPopularSongClick(selectedArtist)}>Most popular song in 2025</Button>
           </Stack>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-          <p>{followers}</p>
-          <p>{mostStreamedSong}</p>
+          <p>{artistFollowers}</p>
+          <p>{artistMostPopularSong}</p>
         </div>
       </span>
     );

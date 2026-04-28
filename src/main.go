@@ -1,12 +1,15 @@
 package main
 
 import (
+	"cmp"
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"slices"
+	"strconv"
 )
 
 type DataRow struct {
@@ -131,6 +134,30 @@ func getFollowersByArtist(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(artistData[0].ArtistFollowers)
 }
 
+func getMostPopularSongByArtist(w http.ResponseWriter, r *http.Request) {
+	type SongPopularityPair struct {
+		Song       string
+		Popularity int
+	}
+	artistData := filterDataByArtist(r.PathValue("name"))
+	var popularityBySong []SongPopularityPair
+	for _, dataRow := range artistData {
+		fmt.Printf(dataRow.ArtistName, dataRow.TrackName, dataRow.TrackPopularity)
+		songPopularityAsInteger, e := strconv.Atoi(dataRow.TrackPopularity)
+		if e != nil {
+			log.Fatal(e)
+		}
+		popularityBySong = append(popularityBySong, SongPopularityPair{dataRow.TrackName, songPopularityAsInteger})
+	}
+	mostPopularSong := slices.MaxFunc(popularityBySong, func(a, b SongPopularityPair) int {
+		return cmp.Compare(a.Popularity, b.Popularity)
+	})
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(mostPopularSong)
+}
+
 /*
 
 func getSelectedDataByArtist(w http.ResponseWriter, r *http.Request) {
@@ -166,5 +193,6 @@ func main() {
 	mux.HandleFunc("GET /artistNames", getArtistNames)
 	mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
 	mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
+	mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
 	http.ListenAndServe(":8080", mux)
 }
