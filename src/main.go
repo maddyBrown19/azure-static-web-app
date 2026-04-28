@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -142,7 +141,6 @@ func getMostPopularSongByArtist(w http.ResponseWriter, r *http.Request) {
 	artistData := filterDataByArtist(r.PathValue("name"))
 	var popularityBySong []SongPopularityPair
 	for _, dataRow := range artistData {
-		fmt.Printf(dataRow.ArtistName, dataRow.TrackName, dataRow.TrackPopularity)
 		songPopularityAsInteger, e := strconv.Atoi(dataRow.TrackPopularity)
 		if e != nil {
 			log.Fatal(e)
@@ -157,36 +155,6 @@ func getMostPopularSongByArtist(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(mostPopularSong)
 }
-
-/*
-
-func getSelectedDataByArtist(w http.ResponseWriter, r *http.Request) {
-	name := r.PathValue("name")
-	data := r.PathValue("data")
-	var selectedArtist artist
-	foundArtist := false
-	for _, artist := range artists {
-		if artist.Name == name {
-			selectedArtist = artist
-			foundArtist = true
-			break
-		}
-	}
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-	if !foundArtist {
-		w.WriteHeader(http.StatusNotFound)
-	} else {
-		w.WriteHeader(http.StatusOK)
-		switch data {
-		case "monthlyListeners":
-			json.NewEncoder(w).Encode(selectedArtist.MonthlyListeners)
-		case "mostStreamedSong":
-			json.NewEncoder(w).Encode(selectedArtist.MostStreamedSong)
-		}
-	}
-}
-*/
 
 func main() {
 	mux := http.NewServeMux()

@@ -15,7 +15,8 @@ function App() {
       try {
         const response = await fetch(`${API_BASE_URL}/artistNames`);
         const names = await response.json();
-        setArtistNames(names);
+        const namesAlphabeticalOrder = [...names].sort((a, b) => a.localeCompare(b));
+        setArtistNames(namesAlphabeticalOrder);
       } catch (e) {
         console.error(e);
       } finally {
@@ -24,19 +25,6 @@ function App() {
     }
     loadInitialData();
   }, []);
-
-  async function getDataByArtist(name) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/artistData/${encodeURIComponent(name)}`);
-      if (!response.ok) {
-        throw new Error("Artist data not found");
-      }
-      var data = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-    return data;
-  }
 
   async function getFollowersByArtist(name) {
     try {
@@ -82,13 +70,6 @@ function App() {
     }
   }
 
-  async function handleMostStreamedSongClick() {
-    //const artistMostStreamedSong = await getSelectedDataByArtist(selectedArtist, "mostStreamedSong", "Artist's most streamed song not found");
-    //if (artistMostStreamedSong) {
-      //setMostStreamedSong(`${selectedArtist}'s most streamed song is "${artistMostStreamedSong}"`);
-    //}
-  };
-
   if (!isLoading) {
     return (
       <span style={{ fontFamily: "Monaco" }}>
@@ -107,7 +88,7 @@ function App() {
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of followers</Button>
+            <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of Spotify followers</Button>
             <Button variant="outlined" onClick={() => handleArtistMostPopularSongClick(selectedArtist)}>Most popular song in 2025</Button>
           </Stack>
         </div>
