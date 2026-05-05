@@ -5,8 +5,11 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"log"
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
+	"io"
 	"slices"
 	"strconv"
 )
@@ -27,6 +30,49 @@ type DataRow struct {
 	AlbumTotalTracks string `json:"albumTotalTracks"`
 	AlbumType        string `json:"albumType"`
 	TrackDurationMin string `json:"trackDurationMin"`
+}
+
+func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
+	clientData := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
+	authData := url.Values{}
+	authData.Set("grant_type", "client_credentials")
+	request, _ := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(authData.Encode()))
+	request.Header.Add("Authorization", "Basic "+authData)
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return "", err 
+	}
+	defer response.Body.Close()
+	var result map[string]interface{}
+	json.NewDecoder(response.Body).Decode(&result)
+	return result["access_token"].(string), nil
+}
+
+func callSpotifySearchAPI(query string, authToken string) (string, error) {
+	baseApiUrl := "https://api.spotify.com/v1/search"
+	parameters := url.Values{}
+	parameters.Add("q", query)
+	parameters.Add("type", "artist,album")
+	parameters.Add("limit", "5")
+	fullApiUrl := fmt.Sprintf("%s?%s", baseApiUrl, parameters.Encode())
+	request, err := http.NewRequest("GET", fullApiUrl, nil)
+	if err != nil {
+		return "", err
+	}
+	request.Header.Set("Authorization", "Bearer "+authToken)
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
 
 func parseSpotifyData(data [][]string) []DataRow {
@@ -157,10 +203,13 @@ func getMostPopularSongByArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /artistNames", getArtistNames)
-	mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
-	mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
-	mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
-	http.ListenAndServe(":8080", mux)
+	//mux := http.NewServeMux()
+	//mux.HandleFunc("GET /artistNames", getArtistNames)
+	//mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
+	//mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
+	//mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
+	//http.ListenAndServe(":8080", mux)
+	query := "female duet genre:folk"
+	authToken := 
+	result = callSpotifySearchAPI()
 }
