@@ -9,6 +9,7 @@ function App() {
   const [selectedArtist, setSelectedArtist] = useState("");
   const [artistFollowers, setArtistFollowers] = useState("");
   const [artistMostPopularSong, setArtistMostPopularSong] = useState("");
+  const [spotifyArtists, setSpotifyArtists] = useState("");
 
   useEffect(() => {
     async function loadInitialData() {
@@ -52,6 +53,19 @@ function App() {
     return mostPopularSong;
   }
 
+  async function getSpotifyArtists() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/artists`);
+      if (!response.ok) {
+        throw new Error("Artists from Spotify not found");
+      }
+      var artists = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+    return artists;
+  }
+
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
@@ -67,6 +81,13 @@ function App() {
     const mostPopularSongByArtist = await getMostPopularSongByArtist(selectedArtist)
     if (mostPopularSongByArtist) {
       setArtistMostPopularSong(`${selectedArtist}'s most popular song in 2025 was "${mostPopularSongByArtist.Song}" with a popularity rating of ${mostPopularSongByArtist.Popularity}/100`);
+    }
+  }
+
+  async function handleGetSpotifyArtists() {
+    const returnedArtists = await getSpotifyArtists()
+    if (returnedArtists) {
+      setSpotifyArtists("Based on your query, these artists are recommended: ", spotifyArtists)
     }
   }
 
@@ -90,11 +111,13 @@ function App() {
           <Stack spacing={2} direction="row">
             <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of Spotify followers</Button>
             <Button variant="outlined" onClick={() => handleArtistMostPopularSongClick(selectedArtist)}>Most popular song in 2025</Button>
+            <Button variant="outlined" onClick={() => handleGetSpotifyArtists()}>Click to get artists from Spotify</Button>
           </Stack>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
           <p>{artistFollowers}</p>
           <p>{artistMostPopularSong}</p>
+          <p>{spotifyArtists}</p>
         </div>
       </span>
     );
