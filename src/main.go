@@ -55,10 +55,8 @@ func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
 	return result["access_token"].(string), nil
 }
 
-/*
-func callAnySpotifyAPI(apiUrl string, authToken string) (string, error) {
-	// Might not end up needing this function
-	request, err := http.NewRequest("GET", apiUrl, nil)
+func getSpotifyAvailableGenreSeeds(authToken string) (string, error) {
+	request, err := http.NewRequest("GET", "https://api.spotify.com/v1/recommendations/available-genre-seeds", nil)
 	if err != nil {
 		return "", err
 	}
@@ -75,7 +73,6 @@ func callAnySpotifyAPI(apiUrl string, authToken string) (string, error) {
 	}
 	return string(body), nil
 }
-*/
 
 func callSpotifySearchAPI(query string, authToken string) (string, error) {
 	baseApiUrl := "https://api.spotify.com/v1/search"
@@ -114,10 +111,12 @@ func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, err
 		return "", unpackErr
 	}
 	artists := searchResult["artists"].(map[string]interface{})
+	fmt.Printf("%+v", artists)
 	items := artists["items"].([]interface{})
 	for _, item := range items {
 		artist := item.(map[string]interface{})
 		name := artist["name"].(string)
+		fmt.Printf(name)
 		artistsResult = append(artistsResult, name)
 	}
 	formattedResult := strings.Join(artistsResult, ", ")
@@ -252,7 +251,9 @@ func getMostPopularSongByArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func getArtistsFromSearch(w http.ResponseWriter, r *http.Request) {
-	query := "acoustic genre:folk"
+	searchTerm := r.PathValue("searchTerm")
+	genre := r.PathValue("genre")
+	query := fmt.Sprintf("%s genre:%s", searchTerm, genre)
 	authToken, authErr := getSpotifyAuthToken(CLIENT_ID, CLIENT_SECRET)
 	if authErr != nil {
 		log.Fatal(authErr)
@@ -269,10 +270,18 @@ func getArtistsFromSearch(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /artists", getArtistsFromSearch)
+	mux.HandleFunc("GET /artists/{searchTerm}/{genre}", getArtistsFromSearch)
 	//mux.HandleFunc("GET /artistNames", getArtistNames)
 	//mux.HandleFunc("GET /artistData/{name}", getDataByArtist)
 	//mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
 	//mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
 	http.ListenAndServe(":8080", mux)
+	/*
+		token, err := getSpotifyAuthToken(CLIENT_ID, CLIENT_SECRET)
+		if err != nil {
+			log.Fatal(err)
+		}
+		genres, err := getSpotifyAvailableGenreSeeds(token)
+		fmt.Printf("%+v", genres)
+	*/
 }

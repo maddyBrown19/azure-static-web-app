@@ -6,11 +6,12 @@ function App() {
   const API_BASE_URL = "http://localhost:8080";
   const [artistNames, setArtistNames] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedArtist, setSelectedArtist] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
   const [artistFollowers, setArtistFollowers] = useState("");
   const [artistMostPopularSong, setArtistMostPopularSong] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [spotifyArtists, setSpotifyArtists] = useState("");
+  const genres = ["pop", "rap", "rock", "urbano latino", "hip hop", "reggaeton", "country", "k-pop", "indie", "singer-songwriter"];
 
   useEffect(() => {
     async function loadInitialData() {
@@ -54,9 +55,9 @@ function App() {
     return mostPopularSong;
   }
 
-  async function getSpotifyArtists() {
+  async function getSpotifyArtists(searchTerm, genre) {
     try {
-      const response = await fetch(`${API_BASE_URL}/artists`);
+      const response = await fetch(`${API_BASE_URL}/artists/${searchTerm}/${selectedGenre}`);
       if (!response.ok) {
         throw new Error("Artists from Spotify not found");
       }
@@ -67,6 +68,7 @@ function App() {
     return artists;
   }
 
+  /*
   const handleSelectedArtistChange = (e) => {
     setSelectedArtist(e.target.value);
   };
@@ -77,13 +79,16 @@ function App() {
       setArtistFollowers(`${selectedArtist} has ${parseInt(followersByArtist, 10).toLocaleString()} followers`);
     }
   };
+  */
 
+  /*
   async function handleArtistMostPopularSongClick() {
     const mostPopularSongByArtist = await getMostPopularSongByArtist(selectedArtist)
     if (mostPopularSongByArtist) {
       setArtistMostPopularSong(`${selectedArtist}'s most popular song in 2025 was "${mostPopularSongByArtist.Song}" with a popularity rating of ${mostPopularSongByArtist.Popularity}/100`);
     }
   }
+    */
 
   async function handleGetSpotifyArtists() {
     console.log("The current search term is: ", searchTerm)
@@ -97,8 +102,9 @@ function App() {
   if (!isLoading) {
     return (
       <span style={{ fontFamily: "Monaco" }}>
-        <h1 style={{ textAlign: "center", paddingTop: 20 }}>2025 in Spotify data</h1>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: 20 }}>
+        <h1 style={{ textAlign: "center", paddingTop: 20 }}>Mixtape</h1>
+        <h3 style={{ textAlign: "center", fontStyle: "italic"}}>A music recommendation platform</h3>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 20, paddingBottom: 20 }}>
           <input
             type="text"
             value={searchTerm}
@@ -106,13 +112,20 @@ function App() {
             style={{width: 250}}
             placeholder="What do you want to listen to?"
           />
-          
+          <label>
+            <select name="selectedGenre" value={selectedGenre} onChange={(event) => setSelectedGenre(event.target.value)}>
+            <option value="">Choose a genre</option>
+            {genres.map((genre) => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+            </select>
+          </label>
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined" onClick={() => handleFollowersClick(selectedArtist)}>Number of Spotify followers</Button>
-            <Button variant="outlined" onClick={() => handleArtistMostPopularSongClick(selectedArtist)}>Most popular song in 2025</Button>
-            <Button variant="outlined" onClick={() => handleGetSpotifyArtists()}>Click to get artists from Spotify</Button>
+            <Button variant="outlined" onClick={() => handleGetSpotifyArtists(searchTerm, selectedGenre)}>Generate recommended artists</Button>
           </Stack>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
