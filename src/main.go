@@ -52,6 +52,26 @@ func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
 	return result["access_token"].(string), nil
 }
 
+func callAnySpotifyAPI(apiUrl string, authToken string) (string, error) {
+	// Might not end up needing this function
+	request, err := http.NewRequest("GET", apiUrl, nil)
+	if err != nil {
+		return "", err
+	}
+	request.Header.Set("Authorization", "Bearer "+authToken)
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
 func callSpotifySearchAPI(query string, authToken string) (string, error) {
 	baseApiUrl := "https://api.spotify.com/v1/search"
 	parameters := url.Values{}
@@ -77,20 +97,25 @@ func callSpotifySearchAPI(query string, authToken string) (string, error) {
 	return string(body), nil
 }
 
-func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, error) {
+func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]string, error) {
 	var searchResult map[string]interface{}
+	var artistsResult []string
 	search, searchErr := callSpotifySearchAPI(query, authToken)
 	if searchErr != nil {
-		return "", searchErr
+		return nil, searchErr
 	}
 	unpackErr := json.Unmarshal([]byte(search), &searchResult)
 	if unpackErr != nil {
-		return "", unpackErr
+		return nil, unpackErr
 	}
 	artists := searchResult["artists"].(map[string]interface{})
 	items := artists["items"].([]interface{})
-	nestedItem := items[0].(map[string]interface{})
-	return nestedItem["href"].(string), nil
+	for _, item := range items {
+		artist := item.(map[string]interface{})
+		name := artist["name"].(string)
+		artistsResult = append(artistsResult, name)
+	}
+	return artistsResult, nil
 }
 
 func parseSpotifyData(data [][]string) []DataRow {
@@ -227,7 +252,7 @@ func main() {
 	//mux.HandleFunc("GET /artistData/{name}/artistFollowers", getFollowersByArtist)
 	//mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
 	//http.ListenAndServe(":8080", mux)
-	query := "female duet genre:folk"
+	query := "dance genre:pop"
 	clientID := "2d14c078f82b4e67869594caa4426e3e"
 	clientSecret := "d33c5c44eb4940eca08a0f5162dc556c"
 	authToken, authErr := getSpotifyAuthToken(clientID, clientSecret)
@@ -238,5 +263,5 @@ func main() {
 	if err != nil {
 		fmt.Printf("There was an error extracting data about artists from the search endpoint: %s", err)
 	}
-	fmt.Printf("%s", result)
+	fmt.Printf("%+v", result)
 }
