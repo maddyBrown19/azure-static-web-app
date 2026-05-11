@@ -2,16 +2,18 @@ package main
 
 import (
 	"cmp"
+	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
-	"log"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
-	"io"
 	"slices"
 	"strconv"
+	"strings"
 )
 
 type DataRow struct {
@@ -37,12 +39,12 @@ func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
 	authData := url.Values{}
 	authData.Set("grant_type", "client_credentials")
 	request, _ := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(authData.Encode()))
-	request.Header.Add("Authorization", "Basic "+authData)
+	request.Header.Add("Authorization", "Basic "+clientData)
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 	defer response.Body.Close()
 	var result map[string]interface{}
@@ -73,6 +75,22 @@ func callSpotifySearchAPI(query string, authToken string) (string, error) {
 		return "", err
 	}
 	return string(body), nil
+}
+
+func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, error) {
+	var searchResult map[string]interface{}
+	search, searchErr := callSpotifySearchAPI(query, authToken)
+	if searchErr != nil {
+		return "", searchErr
+	}
+	unpackErr := json.Unmarshal([]byte(search), &searchResult)
+	if unpackErr != nil {
+		return "", unpackErr
+	}
+	artists := searchResult["artists"].(map[string]interface{})
+	items := artists["items"].([]interface{})
+	nestedItem := items[0].(map[string]interface{})
+	return nestedItem["href"].(string), nil
 }
 
 func parseSpotifyData(data [][]string) []DataRow {
@@ -210,6 +228,15 @@ func main() {
 	//mux.HandleFunc("GET /artistData/{name}/artistMostPopularSong", getMostPopularSongByArtist)
 	//http.ListenAndServe(":8080", mux)
 	query := "female duet genre:folk"
-	authToken := 
-	result = callSpotifySearchAPI()
+	clientID := "2d14c078f82b4e67869594caa4426e3e"
+	clientSecret := "d33c5c44eb4940eca08a0f5162dc556c"
+	authToken, authErr := getSpotifyAuthToken(clientID, clientSecret)
+	if authErr != nil {
+		fmt.Printf("There was an error generating the auth token: %s", authErr)
+	}
+	result, err := getArtistsFromSpotifySearchAPI(query, authToken)
+	if err != nil {
+		fmt.Printf("There was an error extracting data about artists from the search endpoint: %s", err)
+	}
+	fmt.Printf("%s", result)
 }
