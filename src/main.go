@@ -102,16 +102,16 @@ func callSpotifySearchAPI(query string, authToken string) (string, error) {
 	return string(body), nil
 }
 
-func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]string, error) {
+func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, error) {
 	var searchResult map[string]interface{}
 	var artistsResult []string
 	search, searchErr := callSpotifySearchAPI(query, authToken)
 	if searchErr != nil {
-		return nil, searchErr
+		return "", searchErr
 	}
 	unpackErr := json.Unmarshal([]byte(search), &searchResult)
 	if unpackErr != nil {
-		return nil, unpackErr
+		return "", unpackErr
 	}
 	artists := searchResult["artists"].(map[string]interface{})
 	items := artists["items"].([]interface{})
@@ -120,7 +120,8 @@ func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]string, e
 		name := artist["name"].(string)
 		artistsResult = append(artistsResult, name)
 	}
-	return artistsResult, nil
+	formattedResult := strings.Join(artistsResult, ", ")
+	return formattedResult, nil
 }
 
 func parseSpotifyData(data [][]string) []DataRow {

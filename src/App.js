@@ -87,8 +87,9 @@ function App() {
   async function handleGetSpotifyArtists() {
     const returnedArtists = await getSpotifyArtists()
     if (returnedArtists) {
-      setSpotifyArtists("Based on your query, these artists are recommended: ", spotifyArtists)
+      setSpotifyArtists("Based on your query, these artists are recommended: " )
     }
+    console.log("ARTISTS", returnedArtists)
   }
 
   if (!isLoading) {
@@ -96,16 +97,6 @@ function App() {
       <span style={{ fontFamily: "Monaco" }}>
         <h1 style={{ textAlign: "center", paddingTop: 20 }}>2025 in Spotify data</h1>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: 20 }}>
-          <label>
-            <select name="selectedArtist" value={selectedArtist} onChange={handleSelectedArtistChange}>
-              <option value="">Choose an artist...</option>
-              {artistNames.map((artist) => (
-                <option key={artist} value={artist}>
-                  {artist}
-                </option>
-              ))}
-            </select>
-          </label>
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
