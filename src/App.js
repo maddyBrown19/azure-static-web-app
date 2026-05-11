@@ -9,6 +9,7 @@ function App() {
   const [selectedArtist, setSelectedArtist] = useState("");
   const [artistFollowers, setArtistFollowers] = useState("");
   const [artistMostPopularSong, setArtistMostPopularSong] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [spotifyArtists, setSpotifyArtists] = useState("");
 
   useEffect(() => {
@@ -85,9 +86,10 @@ function App() {
   }
 
   async function handleGetSpotifyArtists() {
+    console.log("The current search term is: ", searchTerm)
     const returnedArtists = await getSpotifyArtists()
     if (returnedArtists) {
-      setSpotifyArtists("Based on your query, these artists are recommended: " )
+      setSpotifyArtists(`${returnedArtists}`)
     }
     console.log("ARTISTS", returnedArtists)
   }
@@ -97,6 +99,14 @@ function App() {
       <span style={{ fontFamily: "Monaco" }}>
         <h1 style={{ textAlign: "center", paddingTop: 20 }}>2025 in Spotify data</h1>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: 20 }}>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            style={{width: 250}}
+            placeholder="What do you want to listen to?"
+          />
+          
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
