@@ -111,12 +111,10 @@ func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, err
 		return "", unpackErr
 	}
 	artists := searchResult["artists"].(map[string]interface{})
-	fmt.Printf("%+v", artists)
 	items := artists["items"].([]interface{})
 	for _, item := range items {
 		artist := item.(map[string]interface{})
 		name := artist["name"].(string)
-		fmt.Printf(name)
 		artistsResult = append(artistsResult, name)
 	}
 	formattedResult := strings.Join(artistsResult, ", ")

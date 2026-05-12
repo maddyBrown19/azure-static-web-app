@@ -55,7 +55,7 @@ function App() {
     return mostPopularSong;
   }
 
-  async function getSpotifyArtists(searchTerm, genre) {
+  async function getSpotifyArtists() {
     try {
       const response = await fetch(`${API_BASE_URL}/artists/${searchTerm}/${selectedGenre}`);
       if (!response.ok) {
@@ -91,12 +91,10 @@ function App() {
     */
 
   async function handleGetSpotifyArtists() {
-    console.log("The current search term is: ", searchTerm)
     const returnedArtists = await getSpotifyArtists()
     if (returnedArtists) {
       setSpotifyArtists(`${returnedArtists}`)
     }
-    console.log("ARTISTS", returnedArtists)
   }
 
   if (!isLoading) {
@@ -125,13 +123,16 @@ function App() {
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined" onClick={() => handleGetSpotifyArtists(searchTerm, selectedGenre)}>Generate recommended artists</Button>
+            <Button variant="outlined" style={{color: "blue", fontFamily: "Monaco"}} onClick={() => handleGetSpotifyArtists(searchTerm, selectedGenre)}>Generate recommended artists</Button>
           </Stack>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-          <p>{artistFollowers}</p>
-          <p>{artistMostPopularSong}</p>
-          <p>{spotifyArtists}</p>
+          {spotifyArtists && (
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+              <p style={{fontStyle: "oblique"}}>Based on your search, you might like these artists:</p>
+              <h3 style={{color: "blue"}}>{spotifyArtists}</h3>
+            </div>
+          )}
         </div>
       </span>
     );
