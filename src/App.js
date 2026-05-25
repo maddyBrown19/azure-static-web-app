@@ -6,7 +6,7 @@ function App() {
   const API_BASE_URL = "http://localhost:8080";
   const [selectedGenre, setSelectedGenre] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [spotifyArtists, setSpotifyArtists] = useState("");
+  const [spotifyArtists, setSpotifyArtists] = useState();
   const genres = ["pop", "rap", "rock", "hip hop", "classical", "country", "soul", "indie", "latin pop"];
 
   async function getSpotifyArtists() {
@@ -16,6 +16,7 @@ function App() {
         throw new Error("Artists from Spotify not found");
       }
       var artists = await response.json();
+      console.log(artists[0].Name, artists[0].Url)
     } catch (error) {
       console.error(error);
     }
@@ -25,7 +26,8 @@ function App() {
   async function handleGetSpotifyArtists() {
     const returnedArtists = await getSpotifyArtists()
     if (returnedArtists) {
-      setSpotifyArtists(`${returnedArtists}`)
+      setSpotifyArtists(returnedArtists)
+      console.log(typeof returnedArtists, returnedArtists)
     } else {
       setSpotifyArtists("Oops! No artists were found. Change your search query and try again.")
     }
@@ -63,10 +65,14 @@ function App() {
         {spotifyArtists && (
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <p style={{ fontStyle: "oblique" }}>Based on your search, you might like these artists:</p>
-            {spotifyArtists === "Oops! No artists were found. Change your search query and try again." ? (
+            {typeof spotifyArtists === "string" ? (
               <h3 style={{ color: "gray" }}>{spotifyArtists}</h3>
             ) : (
-              <h3 style={{ color: "blue" }}>{spotifyArtists}</h3>
+              spotifyArtists.map((artist, index) => (
+                <a href={artist.Url} target="_blank" rel="noopener noreferrer" key={index}>
+                  <h3 style={{ color: "blue" }}>{artist.Name}</h3>
+                </a>
+              ))
             )}
           </div>
         )}

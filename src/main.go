@@ -15,8 +15,8 @@ const CLIENT_ID = "2d14c078f82b4e67869594caa4426e3e"
 const CLIENT_SECRET = "d33c5c44eb4940eca08a0f5162dc556c"
 
 type ArtistResult struct {
-	name string
-	url  string
+	Name string
+	Url  string
 }
 
 func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
@@ -81,7 +81,7 @@ func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]ArtistRes
 		artistName := artist["name"].(string)
 		urls := artist["external_urls"].(map[string]interface{})
 		artistUrl := urls["spotify"].(string)
-		artistsResult = append(artistsResult, ArtistResult{name: artistName, url: artistUrl})
+		artistsResult = append(artistsResult, ArtistResult{Name: artistName, Url: artistUrl})
 	}
 	//formattedResult := strings.Join(artistsResult, ", ")
 	fmt.Printf("%v", artistsResult)
