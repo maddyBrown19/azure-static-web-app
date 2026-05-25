@@ -64,7 +64,6 @@ func callSpotifySearchAPI(query string, authToken string) (string, error) {
 
 func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]ArtistResult, error) {
 	var searchResult map[string]interface{}
-	//var artistsResult []string
 	var artistsResult []ArtistResult
 	search, searchErr := callSpotifySearchAPI(query, authToken)
 	if searchErr != nil {
@@ -83,8 +82,6 @@ func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]ArtistRes
 		artistUrl := urls["spotify"].(string)
 		artistsResult = append(artistsResult, ArtistResult{Name: artistName, Url: artistUrl})
 	}
-	//formattedResult := strings.Join(artistsResult, ", ")
-	fmt.Printf("%v", artistsResult)
 	return artistsResult, nil
 }
 
