@@ -14,6 +14,11 @@ import (
 const CLIENT_ID = "2d14c078f82b4e67869594caa4426e3e"
 const CLIENT_SECRET = "d33c5c44eb4940eca08a0f5162dc556c"
 
+type ArtistResult struct {
+	name string
+	url  string
+}
+
 func getSpotifyAuthToken(clientID, clientSecret string) (string, error) {
 	clientData := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
 	authData := url.Values{}
@@ -57,26 +62,30 @@ func callSpotifySearchAPI(query string, authToken string) (string, error) {
 	return string(body), nil
 }
 
-func getArtistsFromSpotifySearchAPI(query string, authToken string) (string, error) {
+func getArtistsFromSpotifySearchAPI(query string, authToken string) ([]ArtistResult, error) {
 	var searchResult map[string]interface{}
-	var artistsResult []string
+	//var artistsResult []string
+	var artistsResult []ArtistResult
 	search, searchErr := callSpotifySearchAPI(query, authToken)
 	if searchErr != nil {
-		return "", searchErr
+		return nil, searchErr
 	}
 	unpackErr := json.Unmarshal([]byte(search), &searchResult)
 	if unpackErr != nil {
-		return "", unpackErr
+		return nil, unpackErr
 	}
 	artists := searchResult["artists"].(map[string]interface{})
 	items := artists["items"].([]interface{})
 	for _, item := range items {
 		artist := item.(map[string]interface{})
-		name := artist["name"].(string)
-		artistsResult = append(artistsResult, name)
+		artistName := artist["name"].(string)
+		urls := artist["external_urls"].(map[string]interface{})
+		artistUrl := urls["spotify"].(string)
+		artistsResult = append(artistsResult, ArtistResult{name: artistName, url: artistUrl})
 	}
-	formattedResult := strings.Join(artistsResult, ", ")
-	return formattedResult, nil
+	//formattedResult := strings.Join(artistsResult, ", ")
+	fmt.Printf("%v", artistsResult)
+	return artistsResult, nil
 }
 
 func getArtistsFromSearch(w http.ResponseWriter, r *http.Request) {
