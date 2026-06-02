@@ -25,8 +25,10 @@ There were a few obstacles and limitations that I ran into over the course of th
 
 While researching these limitations with Spotify Development Mode, I found some intriguing discourse online about the overall trend towards restricting Spotify's developer toolkit and public API offerings. The overwhelming public opinion seems to be one of concern for the future of what a Reddit user calls "indie development." [This Spotify changelog](https://developer.spotify.com/documentation/web-api/references/changes/february-2026) lists the specific endpoints that were removed, added, renamed, or kept unchanged as of February 2026. Most of the changes were to remove available endpoints.
 
-I would like to acknowledge that I had limited time for this project and did not get the opportunity to explore the majority of Spotify's public APIs, so my reflections on Spotify's Development Mode are not comprehensive. 
+I would like to acknowledge that I had limited time for this project and did not get the opportunity to explore the majority of Spotify's public APIs, so my reflections on Spotify's Development Mode are not comprehensive.
 
 ## Future scope
 
-Do clustering and make actual legit recommendations based on multiple variables collected about the user and their taste
+To create a robust recommendation platform, my future goals for this project are to incorporate machine learning clustering into the recommendation generation process. Clustering uses given data points (i.e. music taste) to find other similar data points (i.e. recommended music). It is able to analyze multiple variables, which would allow Mixtape to take more user music taste into account and consequently generate even more accurate and enjoyable recommendations.
+
+Finally, I would be curious to experiment with [Apple Music's public APIs](https://developer.apple.com/documentation/applemusicapi/) to compare them to Spotify's APIs.
