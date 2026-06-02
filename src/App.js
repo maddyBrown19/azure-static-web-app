@@ -7,7 +7,6 @@ function App() {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [spotifyArtists, setSpotifyArtists] = useState();
-  const [spotifyPlaylists, setSpotifyPlaylists] = useState();
   const genres = ["pop", "rap", "rock", "hip hop", "classical", "country", "soul", "indie", "latin pop"];
 
   async function getSpotifyArtists() {
@@ -23,35 +22,12 @@ function App() {
     return artists;
   }
 
-  async function getSpotifyPlaylists() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/playlists/${searchTerm}/${selectedGenre}`);
-      if (!response.ok) {
-        throw new Error("Playlists from Spotify not found");
-      }
-      var playlists = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-    console.log(playlists)
-    return playlists;
-  }
-
   async function handleGetSpotifyArtists() {
     const returnedArtists = await getSpotifyArtists()
     if (returnedArtists) {
       setSpotifyArtists(returnedArtists)
     } else {
       setSpotifyArtists("Oops! No artists were found. Change your search query and try again.")
-    }
-  }
-
-  async function handleGetSpotifyPlaylists() {
-    const returnedPlaylists = await getSpotifyPlaylists()
-    if (returnedPlaylists) {
-      setSpotifyPlaylists(returnedPlaylists)
-    } else {
-      setSpotifyPlaylists("Oops! No playlists were found. Change your search query and try again.")
     }
   }
 
@@ -81,7 +57,6 @@ function App() {
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Stack spacing={2} direction="row">
           <Button variant="outlined" style={{ color: "blue", fontFamily: "Monaco" }} onClick={() => handleGetSpotifyArtists(searchTerm, selectedGenre)}>Generate recommended artists</Button>
-          <Button variant="outlined" style={{ color: "blue", fontFamily: "Monaco" }} onClick={() => handleGetSpotifyPlaylists(searchTerm, selectedGenre)}>Generate recommended playlists</Button>
         </Stack>
       </div>
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
@@ -94,20 +69,6 @@ function App() {
               spotifyArtists.map((artist, index) => (
                 <a href={artist.Url} target="_blank" rel="noopener noreferrer" key={index}>
                   <h3 style={{ color: "blue" }}>{artist.Name}</h3>
-                </a>
-              ))
-            )}
-          </div>
-        )}
-        {spotifyPlaylists && (
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <p style={{ fontStyle: "oblique" }}>Based on your search, you might like these playlists. Click to open them in Spotify.</p>
-            {typeof spotifyPlaylists === "string" ? (
-              <h3 style={{ color: "gray" }}>{spotifyPlaylists}</h3>
-            ) : (
-              spotifyPlaylists.map((playlist, index) => (
-                <a href={playlist.Url} target="_blank" rel="noopener noreferrer" key={index}>
-                  <h3 style={{ color: "blue" }}>{playlist.Name}</h3>
                 </a>
               ))
             )}
