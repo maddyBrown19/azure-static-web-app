@@ -15,7 +15,9 @@ This project was split into four different phases, each with individual objectiv
 
 ## Learnings
 
-The iterative, phase-based nature of this project allowed me to learn about the benefits and drawbacks of APIs in small pieces. Building Mixtape taught me that APIs are really just tools to enable to flow of data between devices. All APIs are fundamentally methods of raw JSON communication. This realization demystified APIs and made it clear to me how powerful and useful they are, given that the internet is based on the sharing of information across networks. 
+The iterative, phase-based nature of this project allowed me to learn about the benefits and drawbacks of APIs in small pieces. Building Mixtape taught me that APIs are really just tools to enable to flow of data between devices. All APIs are fundamentally methods of raw JSON communication. This realization demystified APIs and made it clear to me how powerful and useful they are, given that the internet is based on the sharing of information across networks.
+
+This project also made me realize how helpful APIs are in the context of microservices. Being able to have various APIs for fetching distinct pieces of information allows complex systems of software to be broken down into maintainable, scalable parts each with a singular purpose. In this way, APIs are the foundation for modular microservices that compartmentalize logic and functionality. 
 
 ## Limitations
 
