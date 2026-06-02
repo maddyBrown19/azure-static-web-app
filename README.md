@@ -6,20 +6,12 @@ This project was completed as an independent study during the last term of my se
 
 ## Project phases
 
-This project was split into five different phases, each with individual objectives. They are described below.
+This project was split into four different phases, each with individual objectives. They are described below.
 
 1. I selected an arbitary set of ten artists and hard coded them into the web app. Users had an option to choose an artist from the provided selection and click on two buttons to see facts about them. One button displayed the number of Spotify followers the artist had and the other button displayed the artist's most popular song. The data displayed by the buttons came from Spotify's API.
 2. I sourced a Spotify dataset from Kaggle with thousands of rows of data from 2025. Using this dataset, I upgraded the set of ten artists to include all artists featured in the dataset. I kept the same two buttons from before, but I added a popularity rating when displaying the artist's most popular song.
-3. Next, I made the switch to working with APIs. I enabled the user to provide a search term and select their desired music genre from a dropdown of options. Using these pieces of information, I made a call to Spotify's /search API to find artists that match the user's query. These recommended artists were displayed on the page for the user.
-4. As an extention of the fourth phase, 
-
-
-
-1 - hard coded list of artists, get random facts about them
-2 - get the spotift dataset, update the dropdown to have a ton of artists to choose from, get random facts about them
-3 - switch to /search API and display artists
-4 - link returned artists to external spotify page
-5 - experiment with also generating playlists and fail, research into limited Spotify developer environment
+3. Next, I made the switch to working with APIs. I enabled the user to provide a search term and select their desired music genre from a dropdown of options. Using these pieces of information, I made a call to Spotify's /search API to find artists that match the user's query. A button displayed these recommended artists for the user.
+4. As an extension of the fourth phase, I linked each recommended artist to their external Spotify page. This provided a way for users to listen to these artists' music directly from the web app.  
 
 ## Learnings
 
