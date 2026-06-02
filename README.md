@@ -37,7 +37,7 @@ Finally, I would be curious to experiment with [Apple Music's public APIs](https
 
 1. Create a [Spotify for Developers](https://developer.spotify.com/) account. This is where you will get your Spotify client ID and client secret.
 2. Clone this repository.
-3. Install `npm` in your code editor of choice.
+3. Install `npm` and run the command `go get github.com/joho/godotenv` in your code editor of choice.
 4. Create a .env file and add your `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
 4. Open a terminal window and run the command `go run main.go` to start the server.
 5. In another terminal window, run the command `npm start` to open the web app.
