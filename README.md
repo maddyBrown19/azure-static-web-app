@@ -1,5 +1,5 @@
 # Mixtape: A music recommendation platform
 
-[Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/overview) allows you to easily build [React](https://reactjs.org/) apps in minutes. Use this repo with the [React quickstart](https://docs.microsoft.com/azure/static-web-apps/getting-started?tabs=react) to build and customize a new static site.
+## Overview
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was completed as an independent study during the last term of my senior year (Spring 2026) at Carleton College. My goal for this web app was to get practice working with APIs. My primary objectives were to practice calling external APIs and to build my own API. I listen to and think about music a lot, so I decided to work with Spotify data for this project.
